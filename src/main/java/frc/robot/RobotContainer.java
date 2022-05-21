@@ -30,7 +30,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.SPI;
-
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -224,6 +224,8 @@ public class RobotContainer {
 
   public Command getRamseteAutoCommand() {
 
+    // drivetrain.resetEncoders();
+
     // Create a voltage constraint to ensure we don't accelerate too fast
     var autoVoltageConstraint =
         new DifferentialDriveVoltageConstraint(
@@ -232,7 +234,7 @@ public class RobotContainer {
                 RouteFinderConstants.kvVoltSecondsPerMeter,
                 RouteFinderConstants.kaVoltSecondsSquaredPerMeter),
                 RouteFinderConstants.kDriveKinematics,
-            10);
+            3);
 
     // Create config for trajectory
     TrajectoryConfig config =
@@ -275,6 +277,11 @@ public class RobotContainer {
 
     // Reset odometry to the starting pose of the trajectory.
     drivetrain.resetOdometry(straightLineTrajectory.getInitialPose());
+
+    // Timer time = new Timer();
+    // time.reset();
+    // time.start();
+    // while (!time.hasElapsed(2));
 
     // Run path following command, then stop at the end.
     return ramseteCommand.andThen(() -> drivetrain.tankDriveVolts(0, 0));

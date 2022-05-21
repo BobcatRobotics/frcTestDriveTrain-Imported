@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.DriveTele;
 import frc.robot.subsystems.*;
-import frc.robot.utils.FalconPathPlanner;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -29,7 +28,7 @@ public class Robot extends TimedRobot {
   // private GatherAndLogData gatherAndLogData = new GatherAndLogData();
 
   private RobotContainer m_robotContainer;
-  private FalconPathPlanner m_autonomousCommand;
+  private Command m_autonomousCommand;
   private Joystick gamepad;
   private Drivetrain drivetrain;
   private Compressor compressor;
@@ -105,8 +104,10 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     // i=0;
-    // CommandScheduler.getInstance().cancelAll();
+    CommandScheduler.getInstance().cancelAll();
     // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getRamseteAutoCommand();
+    m_autonomousCommand.schedule();
 
     // // schedule the autonomous command (example)
     // if (m_autonomousCommand.nodeOnlyPath != null) {

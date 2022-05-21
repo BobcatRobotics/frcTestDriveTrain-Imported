@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -80,11 +81,13 @@ public final class Constants {
     public static final int RTMotorPort = 3;
     public static final int RMMotorPort = 4; 
     public static final int RLMotorPort = 5;
-    public static final double gearRatio = 30.75; //9.375; feet not meters anymore
+    // public static final double gearRatio = 30.75; //9.375; feet not meters anymore
+    public static final double gearRatio = 9.375; //9.375; feet not meters anymore
     public static final double encoderTicksPerRev = 2048;
-    public static final double wheelCircumferenceInches = Math.PI*6;
+    public static final double wheelCircumferenceMeters = Math.PI*Units.inchesToMeters(6);
     public static final double wheelDiameterMeters = 0.1524;
-    public static final int encoderCPR = 2048;
+    public static final int encoderCPR = 4096;
+
 
     // Need to edit all the numbers under this for 2020
     // public static final int[] leftEncoderPorts = new int[] { 0, 1 };
@@ -136,16 +139,24 @@ public final class Constants {
     // these values for your robot.
     // public static final double ksVolts = 0.574;
     public static final double ksVolts = 0.59844;
+    // public static final double ksVolts = 0.25;
+    //public static final double ksVolts = 0;
     // public static final double kvVoltSecondsPerMeter = 2.111;
     public static final double kvVoltSecondsPerMeter = 2.1274;
+    // public static final double kvVoltSecondsPerMeter = 0.2;
+    // public static final double kvVoltSecondsPerMeter = 0.16;
+    // public static final double kvVoltSecondsPerMeter = 0.00001;
     // public static final double kaVoltSecondsSquaredPerMeter = 0.132;
-    // public static final double kaVoltSecondsSquaredPerMeter = 0.13245;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.0389; // Romi value
+    public static final double kaVoltSecondsSquaredPerMeter = 0.13245;
+    // public static final double kaVoltSecondsSquaredPerMeter = 0.005; // Romi value
+    // public static final double kaVoltSecondsSquaredPerMeter = 0.0; // Romi value
     public static final double kTrackwidthMeters = 0.566;
 
     // Example value only - as above, this must be tuned for your drive!
     // public static final double kPDriveVel = .010268;
     public static final double kPDriveVel = .0054816;
+    // public static final double kPDriveVel = .0000054816;
+    // public static final double kPDriveVel = 0;
     public static final double kMaxVelocityError = 0.25; // (m/s)
     public static final double kMaxControlEffort = 7; // (v)
 

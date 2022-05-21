@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Constants.DrivetrainConstants;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -82,7 +83,7 @@ public class Drivetrain extends SubsystemBase {
     //private final DifferentialDrive diffDrive = new DifferentialDrive(leftMotors, rightMotors); // The robot's drive
 
 
-    private final AHRS gyro = new AHRS(SPI.Port.kMXP); // The gyro sensor
+    private final NavxGyro gyro = new NavxGyro(SPI.Port.kMXP); // The gyro sensor
 
     private final DifferentialDriveOdometry odometry; // Odometry class for tracking robot pose
     /**
@@ -160,13 +161,14 @@ public class Drivetrain extends SubsystemBase {
         rightMotorGroup = new MotorControllerGroup(rtMotor, rmMotor, rbMotor);
         rightMotorGroup.setInverted(true);
 
-        ltMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_21_FeedbackIntegrated, 20);
-        rtMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_21_FeedbackIntegrated, 20);
+        // ltMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_21_FeedbackIntegrated, 20);
+        // rtMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_21_FeedbackIntegrated, 20);
 
         ltMotor.getSensorCollection().getIntegratedSensorPosition();
         ltMotor.getSelectedSensorPosition();
 
         m_drive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
+        m_drive.setSafetyEnabled(false);
         
         odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
         resetEncoders();
@@ -354,8 +356,14 @@ public class Drivetrain extends SubsystemBase {
      */
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         //return new DifferentialDriveWheelSpeeds(leftEncoder.getRate(), rightEncoder.getRate());
-        double left = 10.0 * (ltMotor.getSelectedSensorVelocity() * 60)/ (Constants.DrivetrainConstants.gearRatio * Constants.DrivetrainConstants.encoderTicksPerRev);
-        double right = 10.0* (rtMotor.getSelectedSensorVelocity() * 60)/ (Constants.DrivetrainConstants.gearRatio *  Constants.DrivetrainConstants.encoderTicksPerRev);
+        // double left = 10.0 * (ltMotor.getSelectedSensorVelocity() * 60)/ (Constants.DrivetrainConstants.gearRatio * Constants.DrivetrainConstants.encoderTicksPerRev);
+        // double right = 10.0* (rtMotor.getSelectedSensorVelocity() * 60)/ (Constants.DrivetrainConstants.gearRatio *  Constants.DrivetrainConstants.encoderTicksPerRev);
+        double left = ltMotor.getSelectedSensorVelocity()* 10 / DrivetrainConstants.encoderCPR / DrivetrainConstants.gearRatio * DrivetrainConstants.wheelCircumferenceMeters;
+        double right = rtMotor.getSelectedSensorVelocity()* 10 / DrivetrainConstants.encoderCPR / DrivetrainConstants.gearRatio * DrivetrainConstants.wheelCircumferenceMeters;
+        SmartDashboard.putNumber("LeftWheelSpeed", left);
+        SmartDashboard.putNumber("RightWheelSpeed", right);
+        SmartDashboard.putNumber("ActualLeftWheelSpeed", ltMotor.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("ActualRightWheelSpeed", rtMotor.getSelectedSensorVelocity());
         return new DifferentialDriveWheelSpeeds(left,right);
                                             
     }
@@ -410,8 +418,16 @@ public class Drivetrain extends SubsystemBase {
         // rtMotor.setVoltage(-rightVolts);
         // rmMotor.setVoltage(-rightVolts);
         // rbMotor.setVoltage(-rightVolts);
-        leftMotorGroup.setVoltage(leftVolts);        
-        rightMotorGroup.setVoltage(rightVolts);        
+        // leftMotorGroup.setVoltage((leftVolts/100+0.6424)/1.8399);
+        // rightMotorGroup.setVoltage((rightVolts/100+0.6424)/1.8399);
+        // SmartDashboard.putNumber("LeftVoltage", (leftVolts/100+0.6424)/1.8399);
+        // SmartDashboard.putNumber("RightVoltage", (rightVolts/100+0.6424)/1.8399);
+        leftMotorGroup.setVoltage(leftVolts);
+        rightMotorGroup.setVoltage(rightVolts);
+        SmartDashboard.putNumber("LeftVoltage", leftVolts);
+        SmartDashboard.putNumber("RightVoltage", rightVolts);
+        // m_drive.tankDrive(leftVolts/14, rightVolts/14, false);
+        // m_drive.tankDrive(0.25*4, 0.25*4, false);
         m_drive.feed();
         // odometry.update(Rotation2d.fromDegrees(gyro.getYaw()), ltMotor.getSensorCollection().getIntegratedSensorPosition(), rtMotor.getSensorCollection().getIntegratedSensorPosition());
     } 
@@ -443,7 +459,6 @@ public class Drivetrain extends SubsystemBase {
         rtMotor.setSelectedSensorPosition(0.0);
         rmMotor.setSelectedSensorPosition(0.0);
         rbMotor.setSelectedSensorPosition(0.0);
-
         // leftEncoder.reset();
         // rightEncoder.reset();
     }

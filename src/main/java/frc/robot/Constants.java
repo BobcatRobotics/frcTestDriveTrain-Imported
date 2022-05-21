@@ -139,7 +139,8 @@ public final class Constants {
     // public static final double kvVoltSecondsPerMeter = 2.111;
     public static final double kvVoltSecondsPerMeter = 2.1274;
     // public static final double kaVoltSecondsSquaredPerMeter = 0.132;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.13245;
+    // public static final double kaVoltSecondsSquaredPerMeter = 0.13245;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.0389; // Romi value
     public static final double kTrackwidthMeters = 0.566;
 
     // Example value only - as above, this must be tuned for your drive!

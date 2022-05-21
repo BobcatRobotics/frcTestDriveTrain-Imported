@@ -19,10 +19,13 @@ import static frc.robot.Constants.RouteFinderConstants.kvVoltSecondsPerMeter;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.controller.PIDController;
@@ -46,6 +49,7 @@ import frc.robot.utils.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import frc.robot.Constants.RouteFinderConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.NavxGyro;
 // import frc.robot.utils.BobcatTrajectoryCreater;
@@ -214,6 +218,66 @@ public class RobotContainer {
       path.calculate(totalTime, timeStep, robotTrackWidth);
 
       return path;
+  }
+
+
+
+  public Command getRamseteAutoCommand() {
+
+    // Create a voltage constraint to ensure we don't accelerate too fast
+    var autoVoltageConstraint =
+        new DifferentialDriveVoltageConstraint(
+            new SimpleMotorFeedforward(
+              RouteFinderConstants.ksVolts,
+                RouteFinderConstants.kvVoltSecondsPerMeter,
+                RouteFinderConstants.kaVoltSecondsSquaredPerMeter),
+                RouteFinderConstants.kDriveKinematics,
+            10);
+
+    // Create config for trajectory
+    TrajectoryConfig config =
+        new TrajectoryConfig(
+                RouteFinderConstants.kMaxSpeedMetersPerSecond,
+                RouteFinderConstants.kMaxAccelerationMetersPerSecondSquared)
+            // Add kinematics to ensure max speed is actually obeyed
+            .setKinematics(RouteFinderConstants.kDriveKinematics)
+            // Apply the voltage constraint
+            .addConstraint(autoVoltageConstraint);
+
+    // An example trajectory to follow.  All units in meters.
+    Trajectory straightLineTrajectory =
+        TrajectoryGenerator.generateTrajectory(
+            // Start at the origin facing the +X direction
+            new Pose2d(0, 0, new Rotation2d(0)),
+            // Pass through line
+            List.of(new Translation2d(0.5, 0)),
+            // End 1 meters straight ahead of where we started, facing forward
+            new Pose2d(1, 0, new Rotation2d(0)),
+            // Pass config
+            config);
+
+    RamseteCommand ramseteCommand =
+        new RamseteCommand(
+            straightLineTrajectory,
+            drivetrain::getPose,
+            new RamseteController(RouteFinderConstants.kRamseteB, RouteFinderConstants.kRamseteZeta),
+            new SimpleMotorFeedforward(
+              RouteFinderConstants.ksVolts,
+              RouteFinderConstants.kvVoltSecondsPerMeter,
+              RouteFinderConstants.kaVoltSecondsSquaredPerMeter),
+              RouteFinderConstants.kDriveKinematics,
+            drivetrain::getWheelSpeeds,
+            new PIDController(RouteFinderConstants.kPDriveVel, 0, 0),
+            new PIDController(RouteFinderConstants.kPDriveVel, 0, 0),
+            // RamseteCommand passes volts to the callback
+            drivetrain::tankDriveVolts,
+            drivetrain);
+
+    // Reset odometry to the starting pose of the trajectory.
+    drivetrain.resetOdometry(straightLineTrajectory.getInitialPose());
+
+    // Run path following command, then stop at the end.
+    return ramseteCommand.andThen(() -> drivetrain.tankDriveVolts(0, 0));
   }
 
 }

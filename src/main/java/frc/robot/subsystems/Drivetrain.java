@@ -6,6 +6,7 @@ import static frc.robot.Constants.DrivetrainConstants.INVERT_MOTOR;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -34,12 +35,12 @@ import frc.robot.Constants;
 
 public class Drivetrain extends SubsystemBase {
 
-   private WPI_TalonFX ltMotor;
-   private WPI_TalonFX lmMotor;
-   private WPI_TalonFX lbMotor;
-   private WPI_TalonFX rtMotor;
-   private WPI_TalonFX rmMotor;
-   private WPI_TalonFX rbMotor;
+   public WPI_TalonFX ltMotor;
+   public WPI_TalonFX lmMotor;
+   public WPI_TalonFX lbMotor;
+   public WPI_TalonFX rtMotor;
+   public WPI_TalonFX rmMotor;
+   public WPI_TalonFX rbMotor;
 
    private MotorControllerGroup leftMotorGroup;
    private MotorControllerGroup rightMotorGroup;
@@ -158,6 +159,13 @@ public class Drivetrain extends SubsystemBase {
         leftMotorGroup = new MotorControllerGroup(ltMotor, lmMotor, lbMotor);
         rightMotorGroup = new MotorControllerGroup(rtMotor, rmMotor, rbMotor);
         rightMotorGroup.setInverted(true);
+
+        ltMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_21_FeedbackIntegrated, 20);
+        rtMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_21_FeedbackIntegrated, 20);
+
+        ltMotor.getSensorCollection().getIntegratedSensorPosition();
+        ltMotor.getSelectedSensorPosition();
+
         m_drive = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
         
         odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
@@ -198,6 +206,10 @@ public class Drivetrain extends SubsystemBase {
         rtMotor.setNeutralMode(NeutralMode.Coast);
         rmMotor.setNeutralMode(NeutralMode.Coast);
         rbMotor.setNeutralMode(NeutralMode.Coast);
+    }
+
+    public void diffDrive(double left, double right) {
+        m_drive.tankDrive(left, right);
     }
 
     /**
@@ -324,7 +336,8 @@ public class Drivetrain extends SubsystemBase {
     public void periodic() {
         //odometry.update(Rotation2d.fromDegrees(getHeading()), leftEncoder.getDistance(), rightEncoder.getDistance()); // Update the odometry in the periodic block (gets location on field)
         //periodic called ever .02s
-        odometry.update(Rotation2d.fromDegrees(getHeading()), ltMotor.getSensorCollection().getIntegratedSensorPosition(), rtMotor.getSensorCollection().getIntegratedSensorPosition());
+        // odometry.update(Rotation2d.fromDegrees(getHeading()), ltMotor.getSensorCollection().getIntegratedSensorPosition(), rtMotor.getSensorCollection().getIntegratedSensorPosition());
+        odometry.update(gyro.getRotation2d(), ltMotor.getSensorCollection().getIntegratedSensorPosition(), rtMotor.getSensorCollection().getIntegratedSensorPosition());
     }
 
     /**
@@ -400,7 +413,7 @@ public class Drivetrain extends SubsystemBase {
         leftMotorGroup.setVoltage(leftVolts);        
         rightMotorGroup.setVoltage(rightVolts);        
         m_drive.feed();
-        odometry.update(Rotation2d.fromDegrees(gyro.getYaw()), ltMotor.getSensorCollection().getIntegratedSensorPosition(), rtMotor.getSensorCollection().getIntegratedSensorPosition());
+        // odometry.update(Rotation2d.fromDegrees(gyro.getYaw()), ltMotor.getSensorCollection().getIntegratedSensorPosition(), rtMotor.getSensorCollection().getIntegratedSensorPosition());
     } 
 
     // currently in encoder counts/ 100ms

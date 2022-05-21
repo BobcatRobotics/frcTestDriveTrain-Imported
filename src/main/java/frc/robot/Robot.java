@@ -62,6 +62,11 @@ public class Robot extends TimedRobot {
     tab.add("Shooter current RPM",0);
     SmartDashboard.putNumber("Left PID output", 0);
     SmartDashboard.putNumber("Right PID output", 0);
+
+    SmartDashboard.putNumber("ltMotor.getSensorCollection.getIntegratedSensorPosition", drivetrain.ltMotor.getSensorCollection().getIntegratedSensorPosition());
+    SmartDashboard.putNumber("rtMotor.getSensorCollection.getIntegratedSensorPosition", drivetrain.rtMotor.getSensorCollection().getIntegratedSensorPosition());
+    SmartDashboard.putNumber("ltMotor.getSelectedSensorPosition", drivetrain.ltMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("rtMotor.getSelectedSensorPosition", drivetrain.rtMotor.getSelectedSensorPosition());
     //SmartDashboard.putNumber("volts", 1);
   }
 
@@ -135,7 +140,7 @@ public class Robot extends TimedRobot {
     
     drivetrain.brake();
     CommandScheduler.getInstance().cancelAll();
-    // drivetele.schedule();
+    drivetele.schedule();
   }
 
   /** This function is called periodically during operator control. */
@@ -151,16 +156,20 @@ public class Robot extends TimedRobot {
     }
     */
     // drivetrain.tankSpeedVelocity(60.0,60.0);
-    double[] outputs = drivetrain.setSpeeds(new DifferentialDriveWheelSpeeds(1, 1));
+    // double[] outputs = drivetrain.setSpeeds(new DifferentialDriveWheelSpeeds(1, 1));
 
-    SmartDashboard.putNumber("Left PID output", outputs[0]);
-    SmartDashboard.putNumber("Right PID output", outputs[1]);
-    //pranay was here NOT
+    // SmartDashboard.putNumber("Left PID output", outputs[0]);
+    // SmartDashboard.putNumber("Right PID output", outputs[1]);
 
     updateShuffleBoard();
   }
 
   public void updateShuffleBoard() {
+
+    SmartDashboard.putNumber("ltMotor.getSensorCollection.getIntegratedSensorPosition", drivetrain.ltMotor.getSensorCollection().getIntegratedSensorPosition());
+    SmartDashboard.putNumber("rtMotor.getSensorCollection.getIntegratedSensorPosition", drivetrain.rtMotor.getSensorCollection().getIntegratedSensorPosition());
+    SmartDashboard.putNumber("ltMotor.getSelectedSensorPosition", drivetrain.ltMotor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("rtMotor.getSelectedSensorPosition", drivetrain.rtMotor.getSelectedSensorPosition());
     // double speed = SmartDashboard.getNumber("Set Speed", 4800);
     // float[] currSpeeds = drivetrain.getGyroSpeeds();
 
@@ -187,6 +196,7 @@ public class Robot extends TimedRobot {
     // // SmartDashboard.putNumber("NavX PID", RobotContainer.navx.pidGet());
     // // SmartDashboard.putNumber("NavX angle", RobotContainer.navx.getAngle());
     // SmartDashboard.putNumber("DriveTrain get pose", drivetrain.getWheelSpeeds().leftMetersPerSecond);
+    SmartDashboard.putNumber("Gyro", drivetrain.getHeading());
     SmartDashboard.putNumber("Get adj left speed", drivetrain.getAdjLeftSpeed());
     SmartDashboard.putNumber("get left speed", drivetrain.getLeftSpeed());
    // SmartDashboard.putNumberArray("left velocity smoothed falcon path planner", RobotContainer.path.smoothLeftVelocity[5]);

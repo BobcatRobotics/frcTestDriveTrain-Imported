@@ -36,9 +36,6 @@ public class Robot extends TimedRobot {
   private boolean shoot = false;
   // private CommandBase desiredAutoCommand;
   private ShuffleboardTab tab = Shuffleboard.getTab("Things Tab");
-  private double waitTime = 0;
-  private float[] fastestSpeed = {0,0,0};
-  private double lastSPeed = 0.0;
   private int i = 0;
 
   /**
@@ -50,7 +47,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    gamepad = m_robotContainer.gamepad;
+    // gamepad = m_robotContainer.gamepad;
     // intake = m_robotContainer.intake;
     // shooter = m_robotContainer.shooter;
     drivetrain = m_robotContainer.drivetrain;
@@ -121,14 +118,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    // CommandScheduler.getInstance().run();
-    // // System.out.println("Finished running auto command is " + m_autonomousCommand.isFinished());
-    // //drivetrain.tankSpeedVelocity(m_autonomousCommand.smoothLeftVelocity[i][1], m_autonomousCommand.smoothRightVelocity[i][1]);
-    // drivetrain.tankSpeedVelocity(60.0, 60.0);
-    // i++;
-    // if(i >= 144) {
-    //   drivetrain.stop();
-    // }
     updateShuffleBoard();
   }
 
@@ -171,45 +160,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("rtMotor.getSensorCollection.getIntegratedSensorPosition", drivetrain.rtMotor.getSensorCollection().getIntegratedSensorPosition());
     SmartDashboard.putNumber("ltMotor.getSelectedSensorPosition", drivetrain.ltMotor.getSelectedSensorPosition());
     SmartDashboard.putNumber("rtMotor.getSelectedSensorPosition", drivetrain.rtMotor.getSelectedSensorPosition());
-    // double speed = SmartDashboard.getNumber("Set Speed", 4800);
-    // float[] currSpeeds = drivetrain.getGyroSpeeds();
 
-    // for (int i =0; i < currSpeeds.length; i++) {
-    //   if (currSpeeds[i] > fastestSpeed[i]) {
-    //     fastestSpeed[i] = currSpeeds[i];
-    //   }
-    //   SmartDashboard.putNumber("Gyro " + i, fastestSpeed[i]);
-    // }
-    // double nSpeed = drivetrain.getWheelSpeeds().leftMetersPerSecond;
-    // SmartDashboard.putNumber("speed",drivetrain.getWheelSpeeds().leftMetersPerSecond);
-    // double accel = (nSpeed - speed) / (1/20);
-    // SmartDashboard.putNumber("Accel",accel);
-    // SmartDashboard.putNumber("adjSpeed",drivetrain.getAdjLeftSpeed());
-    // SmartDashboard.putNumber("odometry",drivetrain.getLeftSpeed());
-    // SmartDashboard.putNumber("x",drivetrain.getPose().getX());
-    // SmartDashboard.putNumber("y",drivetrain.getPose().getY());
-    // speed = nSpeed;
-    // // System.out.println("SET SPEED IS " + speed);
-    // // shooter.setSpeed(speed);
-    // // SmartDashboard.putNumber("Current RPM", shooter.getLeftRPM());
-    
-    // // SmartDashboard.putNumber("NavX heading cos", RobotContainer.navx.getRotation2d().getCos());
-    // // SmartDashboard.putNumber("NavX PID", RobotContainer.navx.pidGet());
-    // // SmartDashboard.putNumber("NavX angle", RobotContainer.navx.getAngle());
-    // SmartDashboard.putNumber("DriveTrain get pose", drivetrain.getWheelSpeeds().leftMetersPerSecond);
     SmartDashboard.putNumber("Gyro", drivetrain.getHeading());
     SmartDashboard.putNumber("Get adj left speed", drivetrain.getAdjLeftSpeed());
     SmartDashboard.putNumber("get left speed", drivetrain.getLeftSpeed());
-   // SmartDashboard.putNumberArray("left velocity smoothed falcon path planner", RobotContainer.path.smoothLeftVelocity[5]);
-    // SmartDashboard.putNumber("get gyro speedx", new Float(drivetrain.getGyroSpeeds()[0]).doubleValue());
-    // SmartDashboard.putNumber("get gyro speedy", new Float(drivetrain.getGyroSpeeds()[1]).doubleValue());
-    double motorOutputVolts = drivetrain.mOV;
-    double rV = drivetrain.rVolts;
-    //SmartDashboard.putNumber("TankDrive Volts", rV);
-    //SmartDashboard.putNumber("Motor Volts", motorOutputVolts);
-    boolean close = Math.round(motorOutputVolts) == Math.round(rV);
-    //SmartDashboard.putBoolean("Voltages Close?", close);
-
   }
   
   @Override

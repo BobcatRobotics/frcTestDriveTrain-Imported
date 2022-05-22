@@ -32,26 +32,7 @@ public class DriveTele extends CommandBase {
     public void execute() {
         left = leftStick.getRawAxis(Joystick.AxisType.kY.value);
         right = rightStick.getRawAxis(Joystick.AxisType.kY.value);
-        drivetrain.diffDrive(left, right);
-        // if (RobotState.isOperatorControl()) {
-        //     // Gets the values of the right and left joystick positions
-        //     right = rightStick.getRawAxis(Joystick.AxisType.kY.value);
-        //     left = leftStick.getRawAxis(Joystick.AxisType.kY.value);
-
-        //     // If the value of the joysticks are too low just set it to zero
-        //     if (Math.abs(right) <= driveThreshold) {
-        //         right = 0.0;
-        //     }
-
-        //     if (Math.abs(left) <= driveThreshold) {
-        //         left = 0.0;
-        //     }
-
-        //     drivetrain.drive(right, left);
-        // } else {
-        //     drivetrain.stop();
-        // }
-        
+        drivetrain.diffDrive(left, right);        
     }
 
     // Runs when command is interrupted
